@@ -80,36 +80,6 @@ function flipVertical () {
 function flipHorizontal () {
     Fish.image.flipX()
 }
-function createFrenchFries () {
-    pizzaList = scene.getTilesByType(5)
-    for (let value of pizzaList) {
-        Pizza = sprites.create(img`
-            . . . . . . b b b b . . . . . . 
-            . . . . . . b 4 4 4 b . . . . . 
-            . . . . . . b b 4 4 4 b . . . . 
-            . . . . . b 4 b b b 4 4 b . . . 
-            . . . . b d 5 5 5 4 b 4 4 b . . 
-            . . . . b 3 2 3 5 5 4 e 4 4 b . 
-            . . . b d 2 2 2 5 7 5 4 e 4 4 e 
-            . . . b 5 3 2 3 5 5 5 5 e e e e 
-            . . b d 7 5 5 5 3 2 3 5 5 e e e 
-            . . b 5 5 5 5 5 2 2 2 5 5 d e e 
-            . b 3 2 3 5 7 5 3 2 3 5 d d e 4 
-            . b 2 2 2 5 5 5 5 5 5 d d e 4 . 
-            b d 3 2 d 5 5 5 d d d 4 4 . . . 
-            b 5 5 5 5 d d 4 4 4 4 . . . . . 
-            4 d d d 4 4 4 . . . . . . . . . 
-            4 4 4 4 . . . . . . . . . . . . 
-            `, SpriteKind.Food)
-        scene.place(value, Pizza)
-        animation.runMovementAnimation(
-        Pizza,
-        animation.animationPresets(animation.bobbing),
-        2000,
-        true
-        )
-    }
-}
 function setupMap () {
     scene.setBackgroundColor(9)
     scene.setTileMap(img`
@@ -223,6 +193,9 @@ function setupMap () {
         . . . . . . . . . . . . . . . . 
         `, false)
 }
+scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile2`, function (sprite, location) {
+	
+})
 function createEntranceDetectors () {
     entranceDetectorList = scene.getTilesByType(3)
     for (let value of entranceDetectorList) {
@@ -345,6 +318,36 @@ function setupFish () {
     scene.placeOnRandomTile(Fish, 14)
     Fish.z = 8
 }
+function createPizzas () {
+    pizzaList = scene.getTilesByType(5)
+    for (let value of pizzaList) {
+        Pizza = sprites.create(img`
+            . . . . . . b b b b . . . . . . 
+            . . . . . . b 4 4 4 b . . . . . 
+            . . . . . . b b 4 4 4 b . . . . 
+            . . . . . b 4 b b b 4 4 b . . . 
+            . . . . b d 5 5 5 4 b 4 4 b . . 
+            . . . . b 3 2 3 5 5 4 e 4 4 b . 
+            . . . b d 2 2 2 5 7 5 4 e 4 4 e 
+            . . . b 5 3 2 3 5 5 5 5 e e e e 
+            . . b d 7 5 5 5 3 2 3 5 5 e e e 
+            . . b 5 5 5 5 5 2 2 2 5 5 d e e 
+            . b 3 2 3 5 7 5 3 2 3 5 d d e 4 
+            . b 2 2 2 5 5 5 5 5 5 d d e 4 . 
+            b d 3 2 d 5 5 5 d d d 4 4 . . . 
+            b 5 5 5 5 d d 4 4 4 4 . . . . . 
+            4 d d d 4 4 4 . . . . . . . . . 
+            4 4 4 4 . . . . . . . . . . . . 
+            `, SpriteKind.Food)
+        scene.place(value, Pizza)
+        animation.runMovementAnimation(
+        Pizza,
+        animation.animationPresets(animation.bobbing),
+        2000,
+        true
+        )
+    }
+}
 function resetTimer () {
     count = 4
 }
@@ -374,10 +377,10 @@ function peteLooking () {
         `)
     pause(200)
 }
-let entranceDetector: Sprite = null
-let entranceDetectorList: tiles.Tile[] = []
 let Pizza: Sprite = null
 let pizzaList: tiles.Tile[] = []
+let entranceDetector: Sprite = null
+let entranceDetectorList: tiles.Tile[] = []
 let Pete: Sprite = null
 let peteTileList: tiles.Tile[] = []
 let Fish: Sprite = null
@@ -396,7 +399,7 @@ setupFish()
 setupPete()
 createDetectors()
 createEntranceDetectors()
-createFrenchFries()
+createPizzas()
 game.onUpdateInterval(100, function () {
     if (count <= 0 && !(Fish.tileKindAt(TileDirection.Center, assets.tile`myTile2`))) {
         game.splash("You've been caught by Pete!")
