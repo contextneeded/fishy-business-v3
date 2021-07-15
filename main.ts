@@ -1,5 +1,6 @@
 namespace SpriteKind {
     export const Detector = SpriteKind.create()
+    export const entranceDetector = SpriteKind.create()
 }
 function createDetectors () {
     detectorTileList = scene.getTilesByType(15)
@@ -26,8 +27,6 @@ function createDetectors () {
     }
 }
 function PeteLooking () {
-    resetTimer()
-    pause(4000)
     Pete.setImage(img`
         ......eeeee.....
         ......dddee.....
@@ -51,11 +50,7 @@ function PeteLooking () {
         ...eeeffffeeee..
         ...eefeeeefeee..
         `)
-    pause(100)
-    if (!(Fish.tileKindAt(TileDirection.Center, assets.tile`myTile2`)) && count == 0) {
-        caughtTrue = true
-        game.over(false)
-    }
+    pause(200)
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (Fish.isHittingTile(CollisionDirection.Bottom)) {
@@ -65,6 +60,9 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     flipHorizontal()
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.entranceDetector, function (sprite, otherSprite) {
+    hideTextSprite = true
 })
 function setupPete () {
     peteList = scene.getTilesByType(13)
@@ -177,17 +175,17 @@ function setupMap () {
     scene.setTile(15, img`
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
+        . . . . . . f . . . f . . . . . 
+        . . . . . . f . . . f . . . . . 
+        . . . . . . . . . . f . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
+        . . . . . f f f f f f f f f . . 
+        . . . . f f . . . . f f f f . . 
+        . . . f f . . . . . . . f f f . 
+        . . f f . . . . . . . . . f f f 
+        . . f . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
@@ -232,29 +230,56 @@ function setupMap () {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
+        . . . . . . 3 . . . 3 . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
+        . . . 3 . . . . . . . . 3 . . . 
+        . . . 3 . . . . . . . 3 3 . . . 
+        . . . . 3 3 . . . . 3 3 . . . . 
+        . . . . . 3 3 . 3 3 . . . . . . 
+        . . . . . . . 3 . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         `, false)
 }
+function createEntranceDetectors () {
+    entranceDetectorList = scene.getTilesByType(3)
+    for (let value of entranceDetectorList) {
+        entranceDetector = sprites.create(img`
+            9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
+            9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
+            9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
+            9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
+            9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
+            9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
+            9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
+            9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
+            9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
+            9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
+            9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
+            9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
+            9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
+            9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
+            9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
+            9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
+            `, SpriteKind.entranceDetector)
+        scene.place(value, entranceDetector)
+    }
+}
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Detector, function (sprite, otherSprite) {
     PeteLooking()
+    if (hideTextSprite == true) {
+        resetTimer()
+    }
     hideTextSprite = false
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
     otherSprite.destroy()
     info.changeScoreBy(1)
-    if (info.score() == 15) {
+    if (info.score() == 16) {
         game.over(true)
     }
 })
@@ -337,10 +362,11 @@ function setupFish () {
 function resetTimer () {
     count = 4
 }
+let entranceDetector: Sprite = null
+let entranceDetectorList: tiles.Tile[] = []
 let Pizza: Sprite = null
 let pizzaList: tiles.Tile[] = []
 let peteList: tiles.Tile[] = []
-let caughtTrue = false
 let Fish: Sprite = null
 let Pete: Sprite = null
 let TheDetector: Sprite = null
@@ -355,9 +381,15 @@ setupMap()
 setupFish()
 setupPete()
 createDetectors()
+createEntranceDetectors()
 createFrenchFries()
 game.onUpdateInterval(100, function () {
+    if (count <= 0 && !(Fish.tileKindAt(TileDirection.Center, assets.tile`myTile2`))) {
+        game.splash("You've been caught by Pete!")
+        game.over(false)
+    }
     if (hideTextSprite == false) {
+        let caughtTrue = false
         if (count < 0 && caughtTrue == false) {
             resetTimer()
         } else {
