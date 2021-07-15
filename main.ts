@@ -26,32 +26,6 @@ function createDetectors () {
         scene.place(value, TheDetector)
     }
 }
-function PeteLooking () {
-    Pete.setImage(img`
-        ......eeeee.....
-        ......dddee.....
-        ......dddde.....
-        .....deddde.....
-        .....dddddd.....
-        .....eddddd.....
-        ......ddddd.....
-        .......ddd......
-        ......77777.....
-        .....7888887....
-        .....7777777....
-        .....7aaaaa7....
-        .....d77777d....
-        ......aaaaa.....
-        ...eefeeeefeee..
-        ...eeefeefeeee..
-        ...eeeeeeeeeee..
-        ...eeefeefeeee..
-        ...eeeeeeeeeee..
-        ...eeeffffeeee..
-        ...eefeeeefeee..
-        `)
-    pause(200)
-}
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (Fish.isHittingTile(CollisionDirection.Bottom)) {
         Fish.vy = -169
@@ -63,10 +37,13 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.entranceDetector, function (sprite, otherSprite) {
     hideTextSprite = true
+    for (let value of peteSpriteList) {
+        animation.stopAnimation(animation.AnimationTypes.All, value)
+    }
 })
 function setupPete () {
-    peteList = scene.getTilesByType(13)
-    for (let value of peteList) {
+    peteTileList = scene.getTilesByType(13)
+    for (let value of peteTileList) {
         Pete = sprites.create(img`
             .....eeeee......
             .....eeddd......
@@ -84,13 +61,14 @@ function setupPete () {
             .....aaaaa......
             ..eeeeeeeeeee...
             ..eeeeeeeeeee...
+            ..eeefeeefeee...
             ..eeeeeeeeeee...
             ..eeeeeeeeeee...
-            ..eeeeeeeeeee...
-            ..eeeeeeeeeee...
+            ..eefffffffee...
             ..eeeeeeeeeee...
             `, SpriteKind.Enemy)
         scene.place(value, Pete)
+        peteSpriteList.push(Pete)
     }
 }
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -270,9 +248,17 @@ function createEntranceDetectors () {
     }
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Detector, function (sprite, otherSprite) {
-    PeteLooking()
+    peteLooking()
     if (hideTextSprite == true) {
         resetTimer()
+        for (let value of peteSpriteList) {
+            animation.runMovementAnimation(
+            value,
+            animation.animationPresets(animation.shake),
+            2000,
+            true
+            )
+        }
     }
     hideTextSprite = false
 })
@@ -362,21 +348,49 @@ function setupFish () {
 function resetTimer () {
     count = 4
 }
+function peteLooking () {
+    Pete.setImage(img`
+        ......eeeee.....
+        ......dddee.....
+        ......dddde.....
+        .....deddde.....
+        .....dddddd.....
+        .....eddddd.....
+        ......ddddd.....
+        .......ddd......
+        ......77777.....
+        .....7888887....
+        .....7777777....
+        .....7aaaaa7....
+        .....d77777d....
+        ......aaaaa.....
+        ...eefeeeefeee..
+        ...eeefeefeeee..
+        ...eeeeeeeeeee..
+        ...eeefeefeeee..
+        ...eeeeeeeeeee..
+        ...eeeffffeeee..
+        ...eefeeeefeee..
+        `)
+    pause(200)
+}
 let entranceDetector: Sprite = null
 let entranceDetectorList: tiles.Tile[] = []
 let Pizza: Sprite = null
 let pizzaList: tiles.Tile[] = []
-let peteList: tiles.Tile[] = []
-let Fish: Sprite = null
 let Pete: Sprite = null
+let peteTileList: tiles.Tile[] = []
+let Fish: Sprite = null
 let TheDetector: Sprite = null
 let detectorTileList: tiles.Tile[] = []
+let peteSpriteList: Sprite[] = []
 let hideTextSprite = false
 let count = 0
 let textSprite = textsprite.create("")
 textSprite.z = 1
 count = 4
 hideTextSprite = true
+peteSpriteList = []
 setupMap()
 setupFish()
 setupPete()
@@ -389,8 +403,7 @@ game.onUpdateInterval(100, function () {
         game.over(false)
     }
     if (hideTextSprite == false) {
-        let caughtTrue = false
-        if (count < 0 && caughtTrue == false) {
+        if (count < 0) {
             resetTimer()
         } else {
             textSprite.setOutline(1, 15)
